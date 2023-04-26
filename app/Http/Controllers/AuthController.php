@@ -27,4 +27,13 @@ class AuthController extends Controller
             'token_type' => 'Bearer',
         ]);
     }
+
+    public function logout(Request $request): \Illuminate\Http\JsonResponse
+    {
+        /** @var \Laravel\Sanctum\PersonalAccessToken $token */
+        $token = $request->user()->currentAccessToken();
+        $token->delete();
+
+        return response()->json(['message' => 'Logged out']);
+    }
 }
