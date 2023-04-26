@@ -14,6 +14,7 @@ class StoreRequest extends FormRequest
      */
     public function authorize()
     {
+        // 認可
         return true;
     }
 

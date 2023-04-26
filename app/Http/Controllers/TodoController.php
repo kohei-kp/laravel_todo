@@ -6,6 +6,7 @@ use App\Http\Requests\Todo\StoreRequest;
 use App\Http\Resources\TodoResource;
 use App\Models\Todo;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
 
 class TodoController extends Controller
@@ -13,15 +14,11 @@ class TodoController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return AnonymousResourceCollection<TodoResource>
      */
-    public function index(Request $request)
+    public function index()
     {
-        $todos = Todo::all();
-
-        return response()->json([
-            'todos' => $todos,
-        ]);
+        return TodoResource::collection(Todo::all());
     }
 
     /**
