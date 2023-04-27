@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Todo\StoreRequest;
+use App\Http\Requests\Todo\UpdateRequest;
 use App\Http\Resources\TodoResource;
 use App\Models\Todo;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\Auth;
 
 class TodoController extends Controller
 {
@@ -63,24 +62,18 @@ class TodoController extends Controller
      * Update the specified resource in storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return TodoResource
      */
-    public function update(Request $request, $id)
+    public function update(UpdateRequest $request, $id)
     {
-        $validate = $request->validate([
-            'task_name' => 'required|string|max:255',
-            'task_description' => 'nullable|string',
-            'is_completed' => 'boolean',
-        ]);
+        // 認可とバリデーション
+        $validatedTodo = $request->makeTodo();
 
-        $todo = Todo::where('id', $id)->firstOrFail();
-        $todo->task_name = $validate['task_name'];
-        $todo->task_description = $validate['task_description'];
-        $todo->is_completed = $validate['is_completed'];
+        // ドメインロジック
+        $todo = Todo::where('id', $id)->first();
+        $todo->update($validatedTodo->toArray());
 
-        return response()->json([
-            'todo' => $todo,
-        ], 200);
+        return new TodoResource($todo);
     }
 
     /**
